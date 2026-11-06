@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ariaNotify support check</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+      max-width: 40rem;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    #result {
+      font-weight: bold;
+      padding: 1rem;
+      border: 2px solid #333;
+    }
+    .supported { border-color: #157347; color: #0b5135; }
+    .unsupported { border-color: #a4262c; color: #8a1c21; }
+  </style>
+</head>
+<body>
+  <h1>ariaNotify support check</h1>
+
+  <p id="result" role="status" aria-live="polite">
+    Checking whether this browser supports ariaNotify…
+  </p>
+
+  <script>
+    const result = document.getElementById("result");
+
+    function announce(message) {
+      // Update the visible text.
+      result.textContent = message;
+
+      // Update the live region for screen readers.
+      // Clearing first can improve repeat announcements in some screen readers.
+      result.setAttribute("aria-live", "off");
+      result.textContent = "";
+      result.setAttribute("aria-live", "polite");
+      result.textContent = message;
+    }
+
+    if ("ariaNotify" in document && typeof document.ariaNotify === "function") {
+      announce("Great!This browser supports ariaNotify.");
+      result.classList.add("supported");
+
+      // Optional: use ariaNotify itself if a screen reader is active.
+      try {
+        document.ariaNotify("This browser supports ariaNotify.");
+      } catch (error) {
+        // The method may exist but fail in some browser/screen-reader combinations.
+      }
+    } else {
+      announce("Sadly, this browser does not support ariaNotify.");
+      result.classList.add("unsupported");
+    }
+  </script>
+</body>
+</html>
